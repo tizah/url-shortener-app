@@ -12,6 +12,11 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import MouseIcon from '@material-ui/icons/Mouse';
 import Badge from '@material-ui/core/Badge';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import TableFooter from '@material-ui/core/TableFooter';
+import TablePagination from '@material-ui/core/TablePagination';
+
+
 
 
 
@@ -63,6 +68,7 @@ function App() {
 
   const classes = useStyles();
 
+
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL || 'http://localhost:5000/api/url';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
@@ -70,6 +76,8 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 
   const [url, setUrl] = useState('');
   const [data, setData] = useState();
+  const [isSaving, setIsSaving] = useState(false);
+
 
   useEffect( () => {
 
@@ -78,17 +86,30 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
       return result;
     }
     getAllUrls().then(x => { setData(x.data)})
-  }, []);
+  }, [isSaving]);
 
 
   const handle_submit = () => {
-   axios.post('shorten', {longUrl: url});
-    setUrl('');
+    setIsSaving(true);
+    setTimeout(() => {
+      axios.post('shorten', {longUrl: url});
+      setUrl('');
+      setIsSaving(false);
+    }, 2000)
+   
   }
+
+  const truncate = (str) => {
+    return str.length > 10 ? str.substring(0, 100) + "..." : str;
+  }
+
 
   return (
     <div className="App">
-      simple url shortener <br/>
+      <div className="header">
+  <h3>A Simple url shortener by David Zagi </h3>
+</div>
+<br/>
       <Container maxWidth="xl">
       <TextField fullWidth id="outlined-basic" label="Enter Url" variant="outlined" onChange={event => setUrl(event.target.value)} />
       <Button
@@ -96,10 +117,11 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
         color="primary"
         size="large"
         className={classes.button}
-        startIcon={<SaveIcon />}
+        startIcon={isSaving ? <CircularProgress /> : <SaveIcon />}
         onClick={handle_submit}
+        disabled={url !== ''  ? false : true}
       >
-        Save
+        { isSaving ? 'Saving' : 'Save'}
       </Button>
      
        <TableContainer component={Paper}>
@@ -115,8 +137,8 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
 {
   data && data.map((x, index) => (
     <StyledTableRow key={index}>
- <StyledTableCell  scope="row">
-                {x.longUrl}
+ <StyledTableCell width='md'  scope="row">
+                <a href={x.longUrl} target='_blank'>{truncate(x.longUrl)}</a>
               </StyledTableCell>
               <StyledTableCell align="right"><a href={x.shortUrl} target='_blank'>{x.shortUrl}</a></StyledTableCell>
               <StyledTableCell align="right">
