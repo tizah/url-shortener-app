@@ -14,3 +14,6 @@ create `.env` file at the root of the project and add `REACT_APP_BASE_URL` envir
 # The application on heroku
 This application can be access at https://ng-short-url-app.herokuapp.com/
 
+![image](https://user-images.githubusercontent.com/16264300/125207661-5d5f8180-e285-11eb-84f6-54f73d2e278e.png)
+
+
