@@ -78,7 +78,7 @@ axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
       return result;
     }
     getAllUrls().then(x => { setData(x.data)})
-  }, [data]);
+  }, []);
 
 
   const handle_submit = () => {
